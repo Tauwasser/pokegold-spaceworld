@@ -629,7 +629,7 @@ Function83e8: ; 02:43e8
 	ld a, [hl]
 	ld l, a
 	ld h, $00
-	ld de, Table83fb
+	ld de, .Table83fb
 	add hl, hl
 	add hl, de
 	ld e, [hl]
@@ -639,133 +639,128 @@ Function83e8: ; 02:43e8
 	push de
 	ret
 
-Table83fb: ; 02:43fb
-	dw Function8432
-	dw Function844a
-	dw Function8459
-	dw Function8433
-	dw Function8438
-	dw Function843d
-	dw Function8468
-	dw Function8477
-	dw Function8485
-	dw Function848b
-	dw Function8494
-	dw Function849b
-	dw Function84a9
-	dw Function84af
-	dw Function84b8
+.Table83fb: ; 02:43fb
+	dw .LoadDone
+	dw .LoadJumpShadow
+	dw .LoadUnknownBouncingOrb
+	dw .LoadShockEmote
+	dw .LoadQuestionEmote
+	dw .LoadHappyEmote
+	dw .LoadBoulderDust
+	dw .LoadGrampsSpriteStandPt0
+	dw .LoadGrampsSpriteStandPt1
+	dw .LoadGrampsSpriteWalkPt0
+	dw .LoadGrampsSpriteWalkPt1
+	dw .LoadPippiSpriteStandPt0
+	dw .LoadPippiSpriteStandPt1
+	dw .LoadPippiSpriteWalkPt0
+	dw .LoadPippiSpriteWalkPt1
 
-Function8419: ; 02:4419
+.FarCopy: ; 02:4419
 	ld a, c
 	ld [wVBCopyFarSrcBank], a
 	ld a, l
 	ld [wVBCopyFarSrc], a
 	ld a, h
 	ld [wVBCopyFarSrc+1], a
-
-Function8425: ; 02:4425
+.ContinueFarCopyNewDst:
 	ld a, e
 	ld [wVBCopyFarDst], a
 	ld a, d
 	ld [wVBCopyFarDst+1], a
-	
-Function842d: ; 02:442d
+.ContinueFarCopy:
 	ld a, b
 	ld [wVBCopyFarSize], a
 	ret
 
-Function8432: ; 02:4432
+.LoadDone: ; 02:4432
 	ret
 
-Function8433: ; 02:4433
+.LoadShockEmote: ; 02:4433
 	ld hl, ShockEmoteGFX
-	jr Function8440
-
-Function8438: ; 02:4438
+	jr .load_emote
+.LoadQuestionEmote: ; 02:4438
 	ld hl, QuestionEmoteGFX
-	jr Function8440
-
-Function843d: ; 02:443d
+	jr .load_emote
+.LoadHappyEmote: ; 02:443d
 	ld hl, HappyEmoteGFX
-
-Function8440: ; 02:4440
+.load_emote: ; 02:4440
 	ld de, vChars1 + $780
-	ld b, $04
-	ld c, BANK(HappyEmoteGFX)
-	jp Function8419
+	ld b, (HappyEmoteGFX.end - HappyEmoteGFX) / LEN_2BPP_TILE
+	ld c, BANK(EmoteGFX)
+	jp .FarCopy
 
-Function844a: ; 02:444a
+.LoadJumpShadow: ; 02:444a
 	ld [hl], $00
 	ld hl, JumpShadowGFX
 	ld de, vChars1 + $7c0
-	ld b, $01
+	ld b, (JumpShadowGFX.end - JumpShadowGFX) / LEN_2BPP_TILE
 	ld c, BANK(JumpShadowGFX)
-	jp Function8419
+	jp .FarCopy
 
-Function8459: ; 02:4459
+.LoadUnknownBouncingOrb: ; 02:4459
 	ld [hl], $00
 	ld hl, UnknownBouncingOrbGFX
 	ld de, vChars1 + $7c0
-	ld b, $04
+	ld b, (UnknownBouncingOrbGFX.end - UnknownBouncingOrbGFX) / LEN_2BPP_TILE
 	ld c, BANK(UnknownBouncingOrbGFX)
-	jp Function8419
+	jp .FarCopy
 
-Function8468: ; 02:4468
+.LoadBoulderDust: ; 02:4468
 	ld [hl], $00
 	ld hl, BoulderDustGFX
 	ld de, vChars1 + $7c0
-	ld b, $01
+	ld b, (BoulderDustGFX.end - BoulderDustGFX) / LEN_2BPP_TILE
 	ld c, BANK(BoulderDustGFX)
-	jp Function8419
+	jp .FarCopy
 
-Function8477: ; 02:4477
+.LoadGrampsSpriteStandPt0: ; 02:4477
 	inc [hl]
 	ld hl, GrampsSpriteGFX
 	ld de, vChars0
-	ld b, $06
+	ld b, (GrampsSpriteGFX.end - GrampsSpriteGFX) / LEN_2BPP_TILE / 4
 	ld c, BANK(GrampsSpriteGFX)
-	jp Function8419
+	jp .FarCopy
 
-Function8485: ; 02:4485
+.LoadGrampsSpriteStandPt1: ; 02:4485
 	inc [hl]
-	ld b, $06
-	jp Function842d
+	ld b, (GrampsSpriteGFX.end - GrampsSpriteGFX) / LEN_2BPP_TILE / 4
+	jp .ContinueFarCopy
 
-Function848b: ; 02:448b
+.LoadGrampsSpriteWalkPt0: ; 02:448b
 	inc [hl]
 	ld de, vChars1
-	ld b, $06
-	jp Function8425
+	ld b, (GrampsSpriteGFX.end - GrampsSpriteGFX) / LEN_2BPP_TILE / 4
+	jp .ContinueFarCopyNewDst
 
-Function8494: ; 02:4494
+.LoadGrampsSpriteWalkPt1: ; 02:4494
 	ld [hl], $00
-	ld b, $06
-	jp Function842d
+	ld b, (GrampsSpriteGFX.end - GrampsSpriteGFX) / LEN_2BPP_TILE / 4
+	jp .ContinueFarCopy
 
-Function849b: ; 02:449b
+.LoadPippiSpriteStandPt0: ; 02:449b
 	inc [hl]
 	ld hl, PippiSpriteGFX
 	ld de, vChars0
-	ld b, $06
+	ld b, (PippiSpriteGFX.end - PippiSpriteGFX) / LEN_2BPP_TILE / 4
 	ld c, BANK(PippiSpriteGFX)
-	jp Function8419
+	jp .FarCopy
 
-Function84a9: ; 02:44a9
+.LoadPippiSpriteStandPt1: ; 02:44a9
 	inc [hl]
-	ld b, $06
-	jp Function842d
+	ld b, (PippiSpriteGFX.end - PippiSpriteGFX) / LEN_2BPP_TILE / 4
+	jp .ContinueFarCopy
 
-Function84af: ; 02:44af
+.LoadPippiSpriteWalkPt0: ; 02:44af
 	inc [hl]
 	ld de, vChars1
-	ld b, $06
-	jp Function8425
+	ld b, (PippiSpriteGFX.end - PippiSpriteGFX) / LEN_2BPP_TILE / 4
+	jp .ContinueFarCopyNewDst
 
-Function84b8: ; 02:44b8
+.LoadPippiSpriteWalkPt1: ; 02:44b8
 	ld [hl], $00
-	ld b, $06
-	jp Function842d
+	ld b, (PippiSpriteGFX.end - PippiSpriteGFX) / LEN_2BPP_TILE / 4
+	jp .ContinueFarCopy
 
 SECTION "engine/dumps/bank02.asm@QueueFollowerFirstStep", ROMX
 	
