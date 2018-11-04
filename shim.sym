@@ -24,7 +24,7 @@
 04:530A Function1130a
 04:53F4 Function113f4
 04:5677 DoPlayerMovement
-04:5DBE DisplayStartMenu
+04:6015 DisplayStartMenuBackpack
 04:640B Function1240b
 04:6C58 CheckRegisteredItem
 
